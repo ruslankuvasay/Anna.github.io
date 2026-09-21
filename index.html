@@ -1,234 +1,60 @@
-
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-<meta charset="UTF-8">
-<title>Title</title>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css" />
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-<script
-src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js">
-</script>
-</head>
-
-<body>
-<h1>Tracker+</h1>
-<script type="text/javascript">
-var activate;
-var startButton;
-let result = []; // массив с результатами
-
-    function trim(string) {
-        return string.replace(/\s+/g, " ").replace(/(^\s*)|(\s*)$/g, '');
-    }
-    var init = 0;
-    var startDate;
-    var clocktimer;
-
-
-    function clearFields() {
-        activate = false;
-        clearTimeout(clocktimer);
-        startDate = undefined;
-        startButton.value = "Start";
-        document.clockform.clock.value = '00:00:00.00';
-        document.clockform.label.value = '';
-        document.clockform.description.value = '';
-        document.clockform.datetimepicker2.value = '';
-    }
-
-
-    function clearALL() {
-        clearFields();
-        document.getElementById('marker').innerHTML = '';
-    }
-
-    function executeTimer() {
-        var thisDate = new Date();
-        var t = thisDate.getTime() - startDate.getTime();
-        var ms = t % 1000;
-        t -= ms;
-        ms = Math.floor(ms / 10);
-        t = Math.floor(t / 1000);
-        var s = t % 60;
-        t -= s;
-        t = Math.floor(t / 60);
-        var m = t % 60;
-        t -= m;
-        t = Math.floor(t / 60);
-        var h = t % 60;
-        if (h < 10) h = '0' + h;
-        if (m < 10) m = '0' + m;
-        if (s < 10) s = '0' + s;
-        if (ms < 10) ms = '0' + ms;
-        document.clockform.clock.value = h + ':' + m + ':' + s + '.' + ms;
-        clocktimer = setTimeout("executeTimer()", 10);
-    }
-
-
-    function startTIME() {
-        if (!activate) {
-            startButton.value = "Pause";
-            activate = !activate;
-            if (startDate == undefined) startDate = new Date();
-            executeTimer();
-            return;
-        } else {
-            startButton.value = "Start";
-            activate = !activate;
-            clearTimeout(clocktimer);
-            return;
-        }
-    }
-
-    function stopALL() {
-        clearTimeout(clocktimer);
-        init = 0;
-    }
-
-    function addLogTime() {
-        var str = trim(document.clockform.label.value);
-        var x = trim(document.clockform.clock.value);
-        var y = trim(document.clockform.datetimepicker2.value);
-        var z = trim(document.clockform.description.value);
-
-        let current = [str, x, y, z];
-        result.push(current);
-        console.log(result);
-
-        renderTable();
-
-        // document.getElementById('td2').innerHTML = (str == '' ? '' : str)
-        // document.getElementById('td3').innerHTML = (x == '' ? '' : x)
-        // document.getElementById('td1').innerHTML = (y == '' ? '' : y)
-        // document.getElementById('td4').innerHTML = (z == '' ? '' : z)
-        // document.getElementById('marker').innerHTML;
-
-        clearFields();
-    }
-
-    window.onload = function () {
-        startButton = document.getElementsByName("starter")[0];
-        document.clockform.clock.value = '00:00:00.00';
-        activate = false;
-    }
-
-    function deleteRow(row) {
-        var i = row.parentNode.parentNode.rowIndex;
-        document.getElementById('POITable').deleteRow(i);
-    }
-
-    function insRow() {
-        var x = document.getElementById('POITable');
-        var new_row = x.rows[1].cloneNode(true);
-        var len = x.rows.length;
-
-
-        new_row.querySelectorAll('input[type=text]')
-            .forEach(function (item) {
-                item.value = "";
-            });
-
-
-        x.appendChild(new_row);
-    }
-
-    function renderTable (){
-        if(result){
-            result.reverse();
-            let $table = document.querySelector('#POITable');
-            let $tr = '';
-            for(let i = 0; i < result.length; i++){
-                $tr += `
-                <tr>
-                    <td>${result[i][0]}</td>
-                    <td>${result[i][1]}</td>
-                    <td>${result[i][2]}</td>
-                    <td>${result[i][3]}</td>
-                </tr>
-                `;
-            }
-            $table.innerHTML = $tr;
-        }
-    }
-
-    $(function () {
-        $('#datetimepicker2').datetimepicker();
-    });
-</script>
-<noscript>
-    <p>Извините, для работы приложения нужен включённый JavaScript</p>
-</noscript>
-
-<form name="clockform" style="background: #F5F5F5">
-    <p>
-        <h3>Time Tracker</h3>
-        <input name="add log time" type="button" value="Add Log Time" style="background:#CD5C5C"
-            onclick="addLogTime()">
-        <input name="reset" type="button" value="Reset" onclick="clearALL()">
-        </br>
-        </br>
-        Time spent:
-        <input name="clock" size="12" maxlength="12" value="00:00:00.00">
-        <input name="starter" type="button" value="Start" onclick="startTIME()">
-        <input name="stop" type="button" value="Stop" onclick="stopALL()">
-
-        Name:
-        <input name="label" size="12" maxlength="30" value="">
-
-        Work description:
-        <input name="description" size="24" value="">
-
-        Start Date:
-        <div class='input-group date; col-xs-2' id='datetimepicker2' style="right:-910px;top:-30px">
-            <input type='text' name="datetimepicker2" class="form-control" />
-            <span class="input-group-addon">
-                <span class="glyphicon glyphicon-calendar"></span>
-            </span>
-        </div>
-    </p>
-    <p id="marker">
-    </p>
-</form>
-<br>
-<h3>Time Log</h3>
-<div id="POItablediv">
-    <table id="POITable" border="1" style="table-layout:fixed;width: 700px;">
-        <tr style="background:#C0C0C0;font-weight: bold">
-            <td>Start Date</td>
-            <td>Name</td>
-            <td>Spent time</td>
-            <td>Description</td>
-            <td style="width: 25px"></td>
-            <td style="width: 25px"></td>
-        </tr>
-        <!-- <div class="for-tr" id="for-tr">
-
-        </div> -->
-
-
-
-
-
-
-        <!-- <tr>
-            <td id="td1"><input type="text" /></td>
-            <td id="td2"><input type="text" /></td>
-            <td id="td3"><input type="text" /></td>
-            <td style="word-wrap:break-word" id="td4"><input type="text" /></td>
-            <td style="width: 25px"><input type="button" id="delPOIbutton" value="-" onclick="deleteRow(this)" />
-            </td>
-            <td style="width: 25px"><input type="button" id="addmorePOIbutton" value="+" onclick="insRow()" /></td>
-        </tr> -->
-    </table>
-</body>
-
-</html>
+<table class='sortable'>
+    <tr><th style="display:none">Id</th>
+        <th>Номер заявки</th>
+        <th>Наименование детали</th>
+        <th>Ед.изм.</th>
+        <th>Количество</th>
+        <th>Количество получено</th>
+        <th>Количество1</th>
+        <th>ТТН1</th>
+        <th>Дата1</th>
+        <th>Н/Н1</th>
+        <th>Цена1</th>
+        <th>Количество2</th>
+        <th>ТТН2</th>
+        <th>Дата2</th>
+        <th>Н/Н2</th>
+        <th>Цена2</th>
+        <th>Количество3</th>
+        <th>ТТН3</th>
+        <th>Дата3</th>
+        <th>Н/Н3</th>
+        <th>Цена3</th>
+    </tr>
+    {% for complect in full_compl_table %}
+    <tr>
+        <td style="display:none">{{ complect.id }}</td>
+        <td><input type="text" name="zayavka_number-{{ forloop.counter }}" required="" id="{{ forloop.counter }}-1" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.zayavka_number }}"><p style="display:none">{{ complect.zayavka_number }}</p></td>
+        <td><input type="text" name="name_of_detail-{{ forloop.counter }}" required="" id="{{ forloop.counter }}-2" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.name_of_detail }}"><p style="display:none">{{ complect.name_of_detail }}</p></td>
+        <td><input type="text" name="ed_izm{{ forloop.counter }}" required="" id="{{ forloop.counter }}-3" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.ed_izm }}"></td>
+        <td><input type="text" name="kolichestvo{{ forloop.counter }}" required="" id="{{ forloop.counter }}-4" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.kolichestvo }}"></td>
+        <td><input type="text" name="itog" required="" id="itog_id" class="itogov" value="СУММА kol1 + kol2 + kol3"></td>
+        <td><input type="text" name="kol_1-{{ forloop.counter }}" required="" class="kol1" id="{{ forloop.counter }}-5" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.kol_1 }}"><p style="display:none">{{ complect.kol1 }}</p></td>
+        <td><input type="text" name="ttn_1-{{ forloop.counter }}" required="" id="{{ forloop.counter }}-6" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.ttn_1 }}"></td>
+        <td><input type="text" name="date_1-{{ forloop.counter }}" required="" id="{{ forloop.counter }}-7" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.date_1 }}"></td>
+        <td><input type="text" name="nom_number_1-{{ forloop.counter }}" required="" id="{{ forloop.counter }}-8" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.nom_number_1 }}"></td>
+        <td><input type="text" name="price_1-{{ forloop.counter }}" required="" id="{{ forloop.counter }}-9" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.price_1 }}"></td>
+        <td><input type="text" name="kol_2-{{ forloop.counter }}" required="" class="kol2" id="{{ forloop.counter }}-10" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.kol_2 }}"><p style="display:none">{{ complect.kol2 }}</p></td>
+        <td><input type="text" name="ttn_2-{{ forloop.counter }}" required="" id="{{ forloop.counter }}-11" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.ttn_2 }}"></td>
+        <td><input type="text" name="date_2-{{ forloop.counter }}" required="" id="{{ forloop.counter }}-12" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.date_2 }}"></td>
+        <td><input type="text" name="nom_number_2-{{ forloop.counter }}" required="" id="{{ forloop.counter }}-13" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.nom_number_2 }}"></td>
+        <td><input type="text" name="price_2-{{ forloop.counter }}" required="" id="{{ forloop.counter }}-14" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.price_2 }}"></td>
+        <td><input type="text" name="kol_3-{{ forloop.counter }}" required="" class="kol3" id="{{ forloop.counter }}-15" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.kol_3 }}"><p style="display:none">{{ complect.kol3 }}</p></td>
+        <td><input type="text" name="ttn_3-{{ forloop.counter }}" required="" id="{{ forloop.counter }}-16" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.ttn_3 }}"></td>
+        <td><input type="text" name="date_3-{{ forloop.counter }}" required="" id="{{ forloop.counter }}-17" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.date_3 }}"></td>
+        <td><input type="text" name="nom_number_3-{{ forloop.counter }}" required="" id="{{ forloop.counter }}-18" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.nom_number_3 }}"></td>
+        <td><input type="text" name="price_3-{{ forloop.counter }}" required="" id="{{ forloop.counter }}-19" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.price_3 }}"></td>
+        <script> function complectChange(id, name, lineid) {
+            var x = document.getElementById(id).value;
+            $.ajax({
+                        url: "/change_complect_table",
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            changevar: x,
+                            chengecolumn: name,
+                            idchange: lineid,
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+                            },
+                    });
+        }</script>
