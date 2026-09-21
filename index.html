@@ -1,60 +1,43 @@
-<table class='sortable'>
-    <tr><th style="display:none">Id</th>
-        <th>Номер заявки</th>
-        <th>Наименование детали</th>
-        <th>Ед.изм.</th>
-        <th>Количество</th>
-        <th>Количество получено</th>
-        <th>Количество1</th>
-        <th>ТТН1</th>
-        <th>Дата1</th>
-        <th>Н/Н1</th>
-        <th>Цена1</th>
-        <th>Количество2</th>
-        <th>ТТН2</th>
-        <th>Дата2</th>
-        <th>Н/Н2</th>
-        <th>Цена2</th>
-        <th>Количество3</th>
-        <th>ТТН3</th>
-        <th>Дата3</th>
-        <th>Н/Н3</th>
-        <th>Цена3</th>
-    </tr>
-    {% for complect in full_compl_table %}
-    <tr>
-        <td style="display:none">{{ complect.id }}</td>
-        <td><input type="text" name="zayavka_number-{{ forloop.counter }}" required="" id="{{ forloop.counter }}-1" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.zayavka_number }}"><p style="display:none">{{ complect.zayavka_number }}</p></td>
-        <td><input type="text" name="name_of_detail-{{ forloop.counter }}" required="" id="{{ forloop.counter }}-2" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.name_of_detail }}"><p style="display:none">{{ complect.name_of_detail }}</p></td>
-        <td><input type="text" name="ed_izm{{ forloop.counter }}" required="" id="{{ forloop.counter }}-3" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.ed_izm }}"></td>
-        <td><input type="text" name="kolichestvo{{ forloop.counter }}" required="" id="{{ forloop.counter }}-4" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.kolichestvo }}"></td>
-        <td><input type="text" name="itog" required="" id="itog_id" class="itogov" value="СУММА kol1 + kol2 + kol3"></td>
-        <td><input type="text" name="kol_1-{{ forloop.counter }}" required="" class="kol1" id="{{ forloop.counter }}-5" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.kol_1 }}"><p style="display:none">{{ complect.kol1 }}</p></td>
-        <td><input type="text" name="ttn_1-{{ forloop.counter }}" required="" id="{{ forloop.counter }}-6" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.ttn_1 }}"></td>
-        <td><input type="text" name="date_1-{{ forloop.counter }}" required="" id="{{ forloop.counter }}-7" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.date_1 }}"></td>
-        <td><input type="text" name="nom_number_1-{{ forloop.counter }}" required="" id="{{ forloop.counter }}-8" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.nom_number_1 }}"></td>
-        <td><input type="text" name="price_1-{{ forloop.counter }}" required="" id="{{ forloop.counter }}-9" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.price_1 }}"></td>
-        <td><input type="text" name="kol_2-{{ forloop.counter }}" required="" class="kol2" id="{{ forloop.counter }}-10" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.kol_2 }}"><p style="display:none">{{ complect.kol2 }}</p></td>
-        <td><input type="text" name="ttn_2-{{ forloop.counter }}" required="" id="{{ forloop.counter }}-11" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.ttn_2 }}"></td>
-        <td><input type="text" name="date_2-{{ forloop.counter }}" required="" id="{{ forloop.counter }}-12" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.date_2 }}"></td>
-        <td><input type="text" name="nom_number_2-{{ forloop.counter }}" required="" id="{{ forloop.counter }}-13" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.nom_number_2 }}"></td>
-        <td><input type="text" name="price_2-{{ forloop.counter }}" required="" id="{{ forloop.counter }}-14" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.price_2 }}"></td>
-        <td><input type="text" name="kol_3-{{ forloop.counter }}" required="" class="kol3" id="{{ forloop.counter }}-15" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.kol_3 }}"><p style="display:none">{{ complect.kol3 }}</p></td>
-        <td><input type="text" name="ttn_3-{{ forloop.counter }}" required="" id="{{ forloop.counter }}-16" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.ttn_3 }}"></td>
-        <td><input type="text" name="date_3-{{ forloop.counter }}" required="" id="{{ forloop.counter }}-17" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.date_3 }}"></td>
-        <td><input type="text" name="nom_number_3-{{ forloop.counter }}" required="" id="{{ forloop.counter }}-18" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.nom_number_3 }}"></td>
-        <td><input type="text" name="price_3-{{ forloop.counter }}" required="" id="{{ forloop.counter }}-19" onchange="complectChange(id, name, {{ complect.id }})" value="{{ complect.price_3 }}"></td>
-        <script> function complectChange(id, name, lineid) {
-            var x = document.getElementById(id).value;
-            $.ajax({
-                        url: "/change_complect_table",
-                        type: "POST",
-                        dataType: "json",
-                        data: {
-                            changevar: x,
-                            chengecolumn: name,
-                            idchange: lineid,
-                            csrfmiddlewaretoken: '{{ csrf_token }}'
-                            },
-                    });
-        }</script>
+<!doctype html>
+<html lang="ru">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Голосование: Любимый цвет</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <form class="poll-form" id="poll-form">
+    <fieldset>
+      <legend>Какой ваш любимый цвет?</legend>
+
+      <label>
+        <input type="radio" name="color" value="0" required>
+        Красный
+      </label>
+      <label>
+        <input type="radio" name="color" value="1">
+        Синий
+      </label>
+      <label>
+        <input type="radio" name="color" value="2">
+        Зеленый
+      </label>
+      <label>
+        <input type="radio" name="color" value="3">
+        Желтый
+      </label>
+
+      <button type="submit">Голосовать</button>
+    </fieldset>
+  </form>
+
+  <section class="poll-results" id="poll-results" aria-live="polite"></section>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
